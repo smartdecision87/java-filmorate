@@ -30,6 +30,7 @@ class FilmorateApplicationTests {
 		assertNotNull(filmController);
 		assertNotNull(userController);
 	}
+
 	// Film Validation Tests
 	@Test
 	void shouldCreateFilmWhenAllFieldsAreValid() {
