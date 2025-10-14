@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/users")
 public class UserController {
-    private Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
     private long id;
 
     // создание пользователя
@@ -28,7 +28,7 @@ public class UserController {
             user.setName(user.getLogin());
         }
         user.setId(getNextId());
-        log.info(String.format("Добавляем пользователя %s", user.getName()));
+        log.info("Добавляем пользователя {}", user.getName());
         users.put(user.getId(), user);
 
         return user;
@@ -42,14 +42,10 @@ public class UserController {
             throw new NotFoundException("Пользователь не найден!");
         }
         User existUser = users.get(updatedUser.getId());
-        if (updatedUser.getLogin().isBlank()) {
-            existUser.setLogin(updatedUser.getEmail());
-        }
         existUser.setName(updatedUser.getName());
         existUser.setEmail(updatedUser.getEmail());
         existUser.setBirthday(updatedUser.getBirthday());
         log.info("Обновляем данные о пользователе " + existUser.getName());
-        users.put(existUser.getId(), existUser);
         return updatedUser;
     }
 

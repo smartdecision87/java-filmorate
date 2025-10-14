@@ -22,9 +22,7 @@ public class FilmController {
     // добавление фильма
     @PostMapping
     public Film add(@Valid @RequestBody Film film) throws ValidationException {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Дата не должна быть раннее 28 декабря 1895 года.");
-        }
+        checkReleaseDate(film.getReleaseDate());
         log.info("Добавляем фильм " + film.getName());
         film.setId(getNextId());
         films.put(film.getId(), film);
@@ -38,10 +36,7 @@ public class FilmController {
             log.warn("Отсутствует идентификатор фильма " + updatedFilm.getName());
             throw new ValidationException("Отсутствует идентификатор фильма.");
         }
-        if (updatedFilm.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.warn("Дата фильма " + updatedFilm.getName() + " не должна быть раннее 28 декабря 1895 года.");
-            throw new ValidationException("Дата не должна быть раннее 28 декабря 1895 года.");
-        }
+        checkReleaseDate(updatedFilm.getReleaseDate());
         Film existedFilm = films.get(updatedFilm.getId());
         if (existedFilm == null) {
             log.warn("Фильм с данным идентификатором отсутствует.");
@@ -52,13 +47,20 @@ public class FilmController {
         return updatedFilm;
     }
 
-    // получение всех фильмов
     @GetMapping
     public List<Film> getList() {
+        log.info("Получаем список всех фильмов.");
         return films.values().stream().toList();
     }
 
     private long getNextId() {
         return ++id;
+    }
+
+    private void checkReleaseDate(LocalDate releaseDate) {
+        if (releaseDate.isBefore(LocalDate.of(1895, 12, 28))) {
+            log.warn("Дата не должна быть раннее 28 декабря 1895 года.");
+            throw new ValidationException("Дата не должна быть раннее 28 декабря 1895 года.");
+        }
     }
 }
